@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.event.*;
+import java.util.*;
 
 public class Main extends Application {
     Label text,workoutName,workoutTime;
@@ -32,8 +33,8 @@ public class Main extends Application {
         }
         text = new Label("Circuit Interval Timer");
         workoutName = new Label("WORKOUT NAME: ");
+        ArrayList<unitWorkout> workoutsList=new ArrayList<unitWorkout>();
         ListView<unitWorkout> workouts = new ListView<unitWorkout>();
-        workouts.getItems().add(new unitWorkout("Pushups", 30));
         nameField = new TextField();
         workoutTime = new Label("TIME: ");
         workoutField = new TextField();
@@ -42,7 +43,14 @@ public class Main extends Application {
         @Override
         public void handle(ActionEvent event)
         {
-        text.setText("Workout");
+        double time=Double.parseDouble(workoutField.getText());
+        workoutsList.add(new unitWorkout(nameField.getText(),time));
+            workouts.getItems().clear();
+            workouts.refresh();
+        for (int i=0;i<workoutsList.size();i++)
+        {
+            workouts.getItems().add(workoutsList.get(i));
+        }
          }
          });
         addRest = new Button("Add Rest");
@@ -50,7 +58,14 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent event)
             {
-                text.setText("Rest");
+                double time=Double.parseDouble(workoutField.getText());
+                workoutsList.add((new unitWorkout("REST",time)));
+                workouts.getItems().clear();
+                workouts.refresh();
+                for (int i=0;i<workoutsList.size();i++)
+                {
+                    workouts.getItems().add(workoutsList.get(i));
+                }
             }
         });
         startButton = new Button("Start ");
@@ -58,7 +73,28 @@ public class Main extends Application {
         @Override
         public void handle(ActionEvent event)
         {
-        text.setText("Start");
+            Timer timer=new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                        public void run() {
+                    workoutsList.get(0).time -= 1;
+                    if (workoutsList.get(0).time==0)
+                    {
+                        workoutsList.remove(0);
+                       return;
+
+                    }
+
+                    workouts.getItems().
+
+                            clear();
+                    workouts.refresh();
+                    for (int i = 0; i < workoutsList.size(); i++) {
+                        workouts.getItems().add(workoutsList.get(i));
+                    }
+                }
+            },0,1000);
+            //timer.cancel();
         }
         });
         BorderPane root = new BorderPane();
