@@ -69,33 +69,36 @@ public class Main extends Application {
             }
         });
         startButton = new Button("Start ");
-        startButton.setOnAction(new EventHandler<ActionEvent>(){
-        @Override
-        public void handle(ActionEvent event)
-        {
-            Timer timer=new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                        public void run() {
-                    workoutsList.get(0).time -= 1;
-                    if (workoutsList.get(0).time==0)
-                    {
-                        workoutsList.remove(0);
-                       return;
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (workoutsList.size()==1 && workoutsList.get(0).time==1)
+                        {
+                            text.setText("over!");
+                            workouts.getItems().clear();
+                            return;
+                        }
+                        workoutsList.get(0).time -= 1;
+                        if (workoutsList.get(0).time == 0) {
+                            workoutsList.remove(0);
+                            return;
 
+                        }
+
+                        workouts.getItems().
+
+                                clear();
+                        workouts.refresh();
+                        for (int i = 0; i < workoutsList.size(); i++) {
+                            workouts.getItems().add(workoutsList.get(i));
+                        }
                     }
-
-                    workouts.getItems().
-
-                            clear();
-                    workouts.refresh();
-                    for (int i = 0; i < workoutsList.size(); i++) {
-                        workouts.getItems().add(workoutsList.get(i));
-                    }
+                }, 0, 1000);
                 }
-            },0,1000);
-            //timer.cancel();
-        }
         });
         BorderPane root = new BorderPane();
         GridPane bottomPane = new GridPane();
