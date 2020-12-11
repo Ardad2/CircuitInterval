@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.media.AudioClip;
@@ -49,7 +50,7 @@ public class Main extends Application {
         AudioClip mediaPlayer1 = new AudioClip(new File(musicFile1).toURI().toString());
 
         text = new Label("Circuit Interval Timer");
-        workoutName = new Label("WORKOUT NAME: ");
+        workoutName = new Label("NAME"+": ");
         ArrayList<unitWorkout> workoutsList=new ArrayList<unitWorkout>();
         ListView<unitWorkout> workouts = new ListView<unitWorkout>();
         nameField = new TextField();
@@ -87,21 +88,17 @@ public class Main extends Application {
         });
         startButton = new Button("Start ");
         stopButton = new Button("Stop ");
+        Timer timer = new Timer();
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Timer timer = new Timer();
+                //Timer task=new TimerTask();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         running=true;
                         if (running==true)
                         {
-
-                            //if (mediaPlayer1.isPlaying())
-                            // {
-                            //     mediaPlayer1.stop();
-                            //}
                             if (workoutsList.size() == 0) {
                                 return;
                             }
@@ -110,6 +107,8 @@ public class Main extends Application {
                                 mediaPlayer1.play();
                                 workoutsList.clear();
                                 workouts.getItems().clear();
+                                timer.cancel();
+
                                 return;
                             }
                             workoutsList.get(0).time -= 1;
@@ -131,22 +130,27 @@ public class Main extends Application {
         stopButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                timer.cancel();
                 running=false;
             }
         });
         BorderPane root = new BorderPane();
-        GridPane bottomPane = new GridPane();
-        bottomPane.add(workoutName, 0, 0);
-        bottomPane.add(nameField, 1, 0);
-        bottomPane.add(workoutTime, 0, 1);
-        bottomPane.add(workoutField, 1, 1);
-        bottomPane.add(addWorkout, 1, 2);
-        bottomPane.add(addRest, 2, 2);
-        bottomPane.add(startButton, 1, 4);
-        bottomPane.add(stopButton, 2, 4);
+        GridPane rightPane=new GridPane();
+        rightPane.add(workoutName,0,0);
+        rightPane.add(nameField,1,0);
+        rightPane.add(workoutTime,0,1);
+        rightPane.add(workoutField,1,1);
+        rightPane.add(addWorkout,0,2);
+        rightPane.add(addRest,1,2);
+        HBox bottomPane = new HBox();
+        bottomPane.setAlignment(Pos.CENTER);
+        bottomPane.getChildren().addAll(startButton,stopButton);
+        Pane leftPane=new Pane();
         root.setTop(text);
-        root.setLeft(workouts);
+        root.setLeft(leftPane);
+        root.setRight(rightPane);
         root.setBottom(bottomPane);
+        root.setCenter(workouts);
         Scene scene = new Scene(root, 400, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
