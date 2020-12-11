@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -12,11 +13,14 @@ import java.util.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
+import java.io.*;
+import sun.audio.*;
 
 public class Main extends Application {
     Label text,workoutName,workoutTime;
     TextField nameField,workoutField;
-    Button addWorkout,addRest,startButton;
+    Button addWorkout,addRest,startButton,stopButton;
+    Boolean running;
     @Override
     public void start(Stage primaryStage) throws Exception {
         class unitWorkout {
@@ -37,12 +41,12 @@ public class Main extends Application {
         String musicFile = "timer.mp3";     // For example
 
         Media sound = new Media(new File(musicFile).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        AudioClip mediaPlayer = new AudioClip(new File(musicFile).toURI().toString());
 
       String musicFile1 = "timerend.wav";     // For example
 
        Media sound1 = new Media(new File(musicFile1).toURI().toString());
-         MediaPlayer mediaPlayer1 = new MediaPlayer(sound1);
+        AudioClip mediaPlayer1 = new AudioClip(new File(musicFile1).toURI().toString());
 
         text = new Label("Circuit Interval Timer");
         workoutName = new Label("WORKOUT NAME: ");
@@ -82,6 +86,7 @@ public class Main extends Application {
             }
         });
         startButton = new Button("Start ");
+        stopButton = new Button("Stop ");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -89,31 +94,45 @@ public class Main extends Application {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (workoutsList.size()==1 && workoutsList.get(0).time==1)
+                        running=true;
+                        if (running==true)
                         {
-                            text.setText("over!");
-                            mediaPlayer1.play();
+
+                            //if (mediaPlayer1.isPlaying())
+                            // {
+                            //     mediaPlayer1.stop();
+                            //}
+                            if (workoutsList.size() == 0) {
+                                return;
+                            }
+                            if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
+                                text.setText("over!");
+                                mediaPlayer1.play();
+                                workoutsList.clear();
+                                workouts.getItems().clear();
+                                return;
+                            }
+                            workoutsList.get(0).time -= 1;
+                            if (workoutsList.get(0).time == 0) {
+                                workoutsList.remove(0);
+                                mediaPlayer.play();
+                                return;
+                            }
                             workouts.getItems().clear();
-                            return;
-                        }
-                        workoutsList.get(0).time -= 1;
-                        if (workoutsList.get(0).time == 0) {
-                            workoutsList.remove(0);
-                            mediaPlayer.play();
-                            return;
-
-                        }
-
-                        workouts.getItems().
-
-                                clear();
-                        workouts.refresh();
-                        for (int i = 0; i < workoutsList.size(); i++) {
-                            workouts.getItems().add(workoutsList.get(i));
+                            workouts.refresh();
+                            for (int i = 0; i < workoutsList.size(); i++) {
+                                workouts.getItems().add(workoutsList.get(i));
+                            }
                         }
                     }
                 }, 0, 1000);
                 }
+        });
+        stopButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                running=false;
+            }
         });
         BorderPane root = new BorderPane();
         GridPane bottomPane = new GridPane();
@@ -124,8 +143,9 @@ public class Main extends Application {
         bottomPane.add(addWorkout, 1, 2);
         bottomPane.add(addRest, 2, 2);
         bottomPane.add(startButton, 1, 4);
+        bottomPane.add(stopButton, 2, 4);
         root.setTop(text);
-        root.setCenter(workouts);
+        root.setLeft(workouts);
         root.setBottom(bottomPane);
         Scene scene = new Scene(root, 400, 400);
         primaryStage.setScene(scene);
