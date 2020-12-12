@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -11,10 +13,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.event.*;
 import java.util.*;
+import java.util.concurrent.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 import java.io.*;
+
+import javafx.util.Duration;
 import sun.audio.*;
 
 public class Main extends Application {
@@ -86,54 +91,61 @@ public class Main extends Application {
                 }
             }
         });
+
+        Timeline oneSecond = new Timeline(
+                new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent event) {
+
+                                    if (workoutsList.size() == 0) {
+                                        return;
+                                    }
+                                    if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
+                                        text.setText("over!");
+                                        mediaPlayer1.play();
+                                        workoutsList.clear();
+                                        workouts.getItems().clear();
+                                        return;
+                                    }
+                                    workoutsList.get(0).time -= 1;
+                                    if (workoutsList.get(0).time == 0) {
+                                        workoutsList.remove(0);
+                                        mediaPlayer.play();
+                                        return;
+                                    }
+                                    workouts.getItems().clear();
+                                    workouts.refresh();
+                                    for (int i = 0; i < workoutsList.size(); i++) {
+                                        workouts.getItems().add(workoutsList.get(i));
+                                    }
+
+                            }
+                        }));
         startButton = new Button("Start ");
         stopButton = new Button("Stop ");
-        Timer timer = new Timer();
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //Timer task=new TimerTask();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        running=true;
-                        if (running==true)
-                        {
-                            if (workoutsList.size() == 0) {
-                                return;
-                            }
-                            if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
-                                text.setText("over!");
-                                mediaPlayer1.play();
-                                workoutsList.clear();
-                                workouts.getItems().clear();
-                                timer.cancel();
-
-                                return;
-                            }
-                            workoutsList.get(0).time -= 1;
-                            if (workoutsList.get(0).time == 0) {
-                                workoutsList.remove(0);
-                                mediaPlayer.play();
-                                return;
-                            }
-                            workouts.getItems().clear();
-                            workouts.refresh();
-                            for (int i = 0; i < workoutsList.size(); i++) {
-                                workouts.getItems().add(workoutsList.get(i));
-                            }
-                        }
-                    }
-                }, 0, 1000);
+                oneSecond.play();
+                oneSecond.setCycleCount(Timeline.INDEFINITE);
                 }
         });
         stopButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                timer.cancel();
-                running=false;
+                oneSecond.stop();
             }
         });
+        if (running=true)
+        {
+            oneSecond.play();
+            oneSecond.setCycleCount(Timeline.INDEFINITE);
+        }
+        if (running=false)
+        {
+            oneSecond.stop();
+        }
         BorderPane root = new BorderPane();
         GridPane rightPane=new GridPane();
         rightPane.add(workoutName,0,0);
