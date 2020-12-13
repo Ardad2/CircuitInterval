@@ -25,8 +25,8 @@ import sun.audio.*;
 public class Main extends Application {
     Label text,workoutName,workoutTime;
     TextField nameField,workoutField;
-    Button addWorkout,addRest,startButton,stopButton;
-    Boolean running;
+    Button addWorkout,addRest,startButton,stopButton,removeButton,clearButton,moveUp,moveDown;
+    Boolean end;
     @Override
     public void start(Stage primaryStage) throws Exception {
         class unitWorkout {
@@ -97,7 +97,6 @@ public class Main extends Application {
 
                             @Override
                             public void handle(ActionEvent event) {
-
                                     if (workoutsList.size() == 0) {
                                         return;
                                     }
@@ -137,15 +136,51 @@ public class Main extends Application {
                 oneSecond.stop();
             }
         });
-        if (running=true)
-        {
-            oneSecond.play();
-            oneSecond.setCycleCount(Timeline.INDEFINITE);
-        }
-        if (running=false)
-        {
-            oneSecond.stop();
-        }
+        removeButton=new Button("X");
+        clearButton=new Button("C");
+        moveUp=new Button("↑");
+        moveUp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int currIndex=workouts.getSelectionModel().getSelectedIndex();
+                int prevIndex=currIndex-1;
+                Collections.swap(workoutsList,currIndex,prevIndex);
+                workouts.getItems().clear();
+                workouts.getItems().addAll(workoutsList);
+                oneSecond.stop();
+            }
+        });
+        moveDown=new Button("↓");
+        moveDown.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int currIndex=workouts.getSelectionModel().getSelectedIndex();
+                int nextIndex=currIndex+1;
+                Collections.swap(workoutsList,currIndex,nextIndex);
+                workouts.getItems().clear();
+                workouts.getItems().addAll(workoutsList);
+                oneSecond.stop();
+            }
+        });
+        removeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int index=workouts.getSelectionModel().getSelectedIndex();
+                workoutsList.remove(index);
+                workouts.getItems().clear();
+                workouts.getItems().addAll(workoutsList);
+                oneSecond.stop();
+            }
+        });
+        clearButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                oneSecond.stop();
+                workoutsList.clear();
+                workouts.getItems().clear();
+            }
+        });
+
         BorderPane root = new BorderPane();
         GridPane rightPane=new GridPane();
         rightPane.add(workoutName,0,0);
@@ -157,7 +192,8 @@ public class Main extends Application {
         HBox bottomPane = new HBox();
         bottomPane.setAlignment(Pos.CENTER);
         bottomPane.getChildren().addAll(startButton,stopButton);
-        Pane leftPane=new Pane();
+        VBox leftPane=new VBox();
+        leftPane.getChildren().addAll(moveUp,moveDown,removeButton,clearButton);
         root.setTop(text);
         root.setLeft(leftPane);
         root.setRight(rightPane);
