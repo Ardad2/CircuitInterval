@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -25,7 +26,7 @@ import sun.audio.*;
 public class Main extends Application {
     Label text,workoutName,workoutTime;
     TextField nameField,workoutField;
-    Button addWorkout,addRest,startButton,stopButton,removeButton,clearButton,moveUp,moveDown;
+    Button addWorkout,addRest,startButton,stopButton,removeButton,clearButton,moveUp,moveDown,homeButton;
     Boolean end;
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -57,6 +58,7 @@ public class Main extends Application {
         text = new Label("Circuit Interval Timer");
         workoutName = new Label("NAME"+": ");
         ArrayList<unitWorkout> workoutsList=new ArrayList<unitWorkout>();
+        workoutsList.add(new unitWorkout("Test",1));
         ListView<unitWorkout> workouts = new ListView<unitWorkout>();
         nameField = new TextField();
         workoutTime = new Label("TIME: ");
@@ -91,7 +93,6 @@ public class Main extends Application {
                 }
             }
         });
-
         Timeline oneSecond = new Timeline(
                 new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
@@ -101,19 +102,18 @@ public class Main extends Application {
                                         return;
                                     }
                                     if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
-                                        text.setText("over!");
                                         mediaPlayer1.play();
                                         workoutsList.clear();
                                         workouts.getItems().clear();
                                         stopButton.fire();
                                         return;
                                     }
-                                    workoutsList.get(0).time -= 1;
                                     if (workoutsList.get(0).time == 0) {
                                         workoutsList.remove(0);
                                         mediaPlayer.play();
                                         return;
                                     }
+                                workoutsList.get(0).time-=1;
                                     workouts.getItems().clear();
                                     workouts.refresh();
                                     for (int i = 0; i < workoutsList.size(); i++) {
@@ -134,9 +134,10 @@ public class Main extends Application {
         stopButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                oneSecond.stop();
+                oneSecond.pause();
             }
         });
+        startButton.fire();
         removeButton=new Button("X");
         clearButton=new Button("C");
         moveUp=new Button("↑");
@@ -181,7 +182,7 @@ public class Main extends Application {
                 workouts.getItems().clear();
             }
         });
-
+        homeButton=new Button("Home");
         BorderPane root = new BorderPane();
         GridPane rightPane=new GridPane();
         rightPane.add(workoutName,0,0);
@@ -195,14 +196,56 @@ public class Main extends Application {
         bottomPane.getChildren().addAll(startButton,stopButton);
         VBox leftPane=new VBox();
         leftPane.getChildren().addAll(moveUp,moveDown,removeButton,clearButton);
-        root.setTop(text);
+        root.setTop(homeButton);
         root.setLeft(leftPane);
         root.setRight(rightPane);
         root.setBottom(bottomPane);
         root.setCenter(workouts);
-        Scene scene = new Scene(root, 400, 400);
-        primaryStage.setScene(scene);
+        Scene main = new Scene(root, 400, 400);
+
+
+        BorderPane homeMain=new BorderPane();
+        Button startApp=new Button("Start");
+        Button exitApp=new Button("Exit");
+
+        startApp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(main);
+            }
+        });
+
+        exitApp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Platform.exit();
+            }
+        });
+
+        Label heading=new Label("CIRCUIT INTERVAL TIMER APP");
+        VBox buttons=new VBox();
+        buttons.getChildren().addAll(startApp,exitApp);
+        HBox top=new HBox(heading);
+        homeMain.setCenter(buttons);
+        homeMain.setTop(top);
+
+
+
+        Scene home = new Scene(homeMain, 400,400);
+
+        BorderPane timerBody=new BorderPane();
+        Scene timerWindow=new Scene(timerBody,400,400);
+
+
+        primaryStage.setScene(home);
         primaryStage.show();
+        homeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(home);
+            }
+        });
+
     }
 
     public static void main(String[] args) {
