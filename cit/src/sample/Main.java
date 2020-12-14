@@ -105,6 +105,7 @@ public class Main extends Application {
                                         mediaPlayer1.play();
                                         workoutsList.clear();
                                         workouts.getItems().clear();
+                                        stopButton.fire();
                                         return;
                                     }
                                     workoutsList.get(0).time -= 1;
