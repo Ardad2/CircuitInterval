@@ -28,6 +28,8 @@ public class Main extends Application {
     TextField nameField,workoutField;
     Button addWorkout,addRest,startButton,stopButton,removeButton,clearButton,moveUp,moveDown,homeButton;
     Boolean end;
+    Scene main,home,timerWindow;
+    int count=0;
     @Override
     public void start(Stage primaryStage) throws Exception {
         class unitWorkout {
@@ -60,6 +62,7 @@ public class Main extends Application {
         ArrayList<unitWorkout> workoutsList=new ArrayList<unitWorkout>();
         workoutsList.add(new unitWorkout("Test",1));
         ListView<unitWorkout> workouts = new ListView<unitWorkout>();
+        ListView<unitWorkout> workouts2 = new ListView<unitWorkout>();
         nameField = new TextField();
         workoutTime = new Label("TIME: ");
         workoutField = new TextField();
@@ -72,9 +75,12 @@ public class Main extends Application {
         workoutsList.add(new unitWorkout(nameField.getText(),time));
             workouts.getItems().clear();
             workouts.refresh();
+            workouts2.getItems().clear();
+            workouts2.refresh();
         for (int i=0;i<workoutsList.size();i++)
         {
             workouts.getItems().add(workoutsList.get(i));
+            workouts2.getItems().add(workoutsList.get(i));
         }
          }
          });
@@ -87,9 +93,12 @@ public class Main extends Application {
                 workoutsList.add((new unitWorkout("REST",time)));
                 workouts.getItems().clear();
                 workouts.refresh();
+                workouts2.getItems().clear();
+                workouts2.refresh();
                 for (int i=0;i<workoutsList.size();i++)
                 {
                     workouts.getItems().add(workoutsList.get(i));
+                    workouts2.getItems().add(workoutsList.get(i));
                 }
             }
         });
@@ -102,10 +111,14 @@ public class Main extends Application {
                                         return;
                                     }
                                     if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
-                                        mediaPlayer1.play();
+                                        if (count>0) {
+                                            mediaPlayer1.play();
+                                        }
                                         workoutsList.clear();
                                         workouts.getItems().clear();
+                                        workouts2.getItems().clear();
                                         stopButton.fire();
+                                        count++;
                                         return;
                                     }
                                     if (workoutsList.get(0).time == 0) {
@@ -116,12 +129,28 @@ public class Main extends Application {
                                 workoutsList.get(0).time-=1;
                                     workouts.getItems().clear();
                                     workouts.refresh();
+                                workouts2.getItems().clear();
+                                workouts2.refresh();
                                     for (int i = 0; i < workoutsList.size(); i++) {
                                         workouts.getItems().add(workoutsList.get(i));
+                                        workouts2.getItems().add(workoutsList.get(i));
                                     }
 
                             }
                         }));
+
+        Button returnButton=new Button("return");
+        returnButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(main);
+            }
+        });
+
+
+
+
+
         startButton = new Button("Start ");
         stopButton = new Button("Stop ");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -129,6 +158,9 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 oneSecond.play();
                 oneSecond.setCycleCount(Timeline.INDEFINITE);
+                if (workoutsList.size() != 0) {
+                    primaryStage.setScene(timerWindow);
+                }
                 }
         });
         stopButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -149,6 +181,8 @@ public class Main extends Application {
                 Collections.swap(workoutsList,currIndex,prevIndex);
                 workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
+                workouts2.getItems().clear();
+                workouts2.getItems().addAll(workoutsList);
                 oneSecond.stop();
             }
         });
@@ -161,6 +195,8 @@ public class Main extends Application {
                 Collections.swap(workoutsList,currIndex,nextIndex);
                 workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
+                workouts2.getItems().clear();
+                workouts2.getItems().addAll(workoutsList);
                 oneSecond.stop();
             }
         });
@@ -171,6 +207,8 @@ public class Main extends Application {
                 workoutsList.remove(index);
                 workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
+                workouts2.getItems().clear();
+                workouts2.getItems().addAll(workoutsList);
                 oneSecond.stop();
             }
         });
@@ -180,6 +218,7 @@ public class Main extends Application {
                 oneSecond.stop();
                 workoutsList.clear();
                 workouts.getItems().clear();
+                workouts2.getItems().clear();
             }
         });
         homeButton=new Button("Home");
@@ -201,8 +240,22 @@ public class Main extends Application {
         root.setRight(rightPane);
         root.setBottom(bottomPane);
         root.setCenter(workouts);
-        Scene main = new Scene(root, 400, 400);
+        main = new Scene(root, 400, 400);
 
+       ///--------------------------------------
+        GridPane centerPane=new GridPane();
+
+       workouts2.setPrefWidth(400);
+       workouts2.setPrefHeight(400);
+        workouts2.setStyle("-fx-font-size: 9.5em ;");
+        workouts2.getItems().add(workoutsList.get(0));
+        centerPane.getChildren().add(workouts2);
+
+        BorderPane timerBody=new BorderPane();
+        timerBody.setTop(returnButton);
+        timerBody.setCenter(centerPane);
+
+        timerWindow=new Scene(timerBody,400,400);
 
         BorderPane homeMain=new BorderPane();
         Button startApp=new Button("Start");
@@ -222,6 +275,7 @@ public class Main extends Application {
             }
         });
 
+
         Label heading=new Label("CIRCUIT INTERVAL TIMER APP");
         VBox buttons=new VBox();
         buttons.getChildren().addAll(startApp,exitApp);
@@ -231,10 +285,23 @@ public class Main extends Application {
 
 
 
-        Scene home = new Scene(homeMain, 400,400);
+        home = new Scene(homeMain, 400,400);
 
-        BorderPane timerBody=new BorderPane();
-        Scene timerWindow=new Scene(timerBody,400,400);
+         returnButton=new Button("RETURN");
+
+        /*
+        returnButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                primaryStage.setScene(main);
+            }
+        });
+        */
+
+
+      //  BorderPane timerBody=new BorderPane();
+       // timerBody.setTop(returnButton);
+       // Scene timerWindow=new Scene(timerBody,400,400);
 
 
         primaryStage.setScene(home);
@@ -242,7 +309,12 @@ public class Main extends Application {
         homeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
                 primaryStage.setScene(home);
+                workouts.getItems().clear();
+                workoutsList.clear();
+                workoutField.clear();
+                nameField.clear();
             }
         });
 
