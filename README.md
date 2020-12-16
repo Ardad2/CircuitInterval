@@ -10,3 +10,7 @@ Features
 3) You can start and pause the current process any time.
 4) You're redirected to a larger screen in which the name of the current workout along with its time is displayed to provide ease in tracking which workout has to be done.
 5) In total there are three screens: - The home screen, the workout list screen, and the timer screen.
+
+Other Facts
+I had seen that stay at home circuit training workouts had become quite popular during the quarantine and I found that it is pretty much impossible to create your own circuits 
+using the clock app that comes with mobile phones and PC's. Therefore, I thought about creating an app that could help make this process possible. 
