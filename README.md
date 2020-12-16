@@ -14,3 +14,6 @@ Features
 Other Facts
 I had seen that stay at home circuit training workouts had become quite popular during the quarantine and I found that it is pretty much impossible to create your own circuits 
 using the clock app that comes with mobile phones and PC's. Therefore, I thought about creating an app that could help make this process possible. 
+
+Bugs to Fix
+1) The timer doesn't seem to start when you press the start for the first time. It starts working the second time onward. I'm still figuring out why this is happening.
