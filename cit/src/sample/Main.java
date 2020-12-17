@@ -108,6 +108,7 @@ public class Main extends Application {
                             @Override
                             public void handle(ActionEvent event) {
                                     if (workoutsList.size() == 0) {
+                                        stopButton.fire();
                                         return;
                                     }
                                     if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
@@ -176,10 +177,16 @@ public class Main extends Application {
         moveUp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                int currIndex=workouts.getSelectionModel().getSelectedIndex();
-                int prevIndex=currIndex-1;
-                Collections.swap(workoutsList,currIndex,prevIndex);
-                workouts.getItems().clear();
+                int currIndex = workouts.getSelectionModel().getSelectedIndex();
+                int prevIndex = currIndex - 1;
+                try {
+                    Collections.swap(workoutsList, currIndex, prevIndex);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+
+                }
+                    workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
                 workouts2.getItems().clear();
                 workouts2.getItems().addAll(workoutsList);
@@ -192,7 +199,13 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 int currIndex=workouts.getSelectionModel().getSelectedIndex();
                 int nextIndex=currIndex+1;
-                Collections.swap(workoutsList,currIndex,nextIndex);
+                try {
+                    Collections.swap(workoutsList, currIndex, nextIndex);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+
+                }
                 workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
                 workouts2.getItems().clear();
@@ -204,7 +217,13 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent event) {
                 int index=workouts.getSelectionModel().getSelectedIndex();
-                workoutsList.remove(index);
+                try{
+                    workoutsList.remove(index);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+
+                }
                 workouts.getItems().clear();
                 workouts.getItems().addAll(workoutsList);
                 workouts2.getItems().clear();
@@ -242,10 +261,10 @@ public class Main extends Application {
         root.setCenter(workouts);
         main = new Scene(root, 400, 400);
 
-       ///--------------------------------------
+        
         GridPane centerPane=new GridPane();
 
-       workouts2.setPrefWidth(400);
+       workouts2.setPrefWidth(600);
        workouts2.setPrefHeight(400);
         workouts2.setStyle("-fx-font-size: 9.5em ;");
         workouts2.getItems().add(workoutsList.get(0));
@@ -255,7 +274,7 @@ public class Main extends Application {
         timerBody.setTop(returnButton);
         timerBody.setCenter(centerPane);
 
-        timerWindow=new Scene(timerBody,400,400);
+        timerWindow=new Scene(timerBody,600,400);
 
         BorderPane homeMain=new BorderPane();
         Button startApp=new Button("Start");
@@ -288,22 +307,6 @@ public class Main extends Application {
         home = new Scene(homeMain, 400,400);
 
          returnButton=new Button("RETURN");
-
-        /*
-        returnButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                primaryStage.setScene(main);
-            }
-        });
-        */
-
-
-      //  BorderPane timerBody=new BorderPane();
-       // timerBody.setTop(returnButton);
-       // Scene timerWindow=new Scene(timerBody,400,400);
-
-
         primaryStage.setScene(home);
         primaryStage.show();
         homeButton.setOnAction(new EventHandler<ActionEvent>() {
