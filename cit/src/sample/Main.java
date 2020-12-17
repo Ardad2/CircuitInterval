@@ -61,6 +61,7 @@ public class Main extends Application {
         workoutName = new Label("NAME"+": ");
         ArrayList<unitWorkout> workoutsList=new ArrayList<unitWorkout>();
         workoutsList.add(new unitWorkout("Test",1));
+        workoutsList.add(new unitWorkout("Test",1));
         ListView<unitWorkout> workouts = new ListView<unitWorkout>();
         ListView<unitWorkout> workouts2 = new ListView<unitWorkout>();
         nameField = new TextField();
@@ -83,6 +84,7 @@ public class Main extends Application {
             workouts2.getItems().add(workoutsList.get(i));
         }
          }
+
          });
         addRest = new Button("Add Rest");
         addRest.setOnAction(new EventHandler<ActionEvent>(){
@@ -112,9 +114,7 @@ public class Main extends Application {
                                         return;
                                     }
                                     if (workoutsList.size() == 1 && workoutsList.get(0).time == 1) {
-                                        if (count>0) {
                                             mediaPlayer1.play();
-                                        }
                                         workoutsList.clear();
                                         workouts.getItems().clear();
                                         workouts2.getItems().clear();
@@ -147,7 +147,6 @@ public class Main extends Application {
                 primaryStage.setScene(main);
             }
         });
-
 
 
 
@@ -254,15 +253,18 @@ public class Main extends Application {
         bottomPane.getChildren().addAll(startButton,stopButton);
         VBox leftPane=new VBox();
         leftPane.getChildren().addAll(moveUp,moveDown,removeButton,clearButton);
-        root.setTop(homeButton);
+        HBox topPane=new HBox();
+        topPane.getChildren().addAll(homeButton,text);
+        root.setTop(topPane);
         root.setLeft(leftPane);
         root.setRight(rightPane);
         root.setBottom(bottomPane);
         root.setCenter(workouts);
         main = new Scene(root, 400, 400);
 
-        
+
         GridPane centerPane=new GridPane();
+
 
        workouts2.setPrefWidth(600);
        workouts2.setPrefHeight(400);
