@@ -19,4 +19,5 @@ using the clock app that comes with mobile phones and PC's. Therefore, I thought
 
 Bugs to Fix
 
-1) The timer doesn't seem to start when you press the start for the first time. It starts working the second time onward. I'm still figuring out why this is happening.
+1) (The timer doesn't seem to start when you press the start for the first time. It starts working the second time onward. I'm still figuring out why this is happening.)
+   Kinda fixed, I've found a work around.
