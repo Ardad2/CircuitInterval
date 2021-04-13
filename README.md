@@ -1,8 +1,7 @@
 # CircuitInterval
 
 This is a program developed by me using JavaFX to help in creating intervals for Circuit Training workouts. This is my first attempt at creating an application with JavaFX and 
-what I learnt in my University's CSE 205 class really helped me in learning JavaFX and its applications. I plan to recreate this app on Android studio once I upgrade my Computer's
-specifications.
+what I learnt in my University's CSE 205 class really helped me in learning JavaFX and its applications. This helped familiarize me with making GUI based applications.
 
 Features
 
@@ -15,7 +14,7 @@ Features
 Other Facts
 
 I had seen that stay at home circuit training workouts had become quite popular during the quarantine and I found that it is pretty much impossible to create your own circuits 
-using the clock app that comes with mobile phones and PC's. Therefore, I thought about creating an app that could help make this process possible. 
+using the clock app that comes with mobile phones and PC's. Therefore, I thought about creating an app that could help make this process much easier and more convenient. 
 
 Bugs to Fix
 
